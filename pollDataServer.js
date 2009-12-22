@@ -65,6 +65,5 @@ fu.get("/update", function (req, res) {
 fu.get("/", fu.staticHandler("./client-side/index.html"));
 fu.get("/css/site.css", fu.staticHandler("./client-side/css/site.css"));
 fu.get("/js/site.js", fu.staticHandler("./client-side/js/site.js"));
-fu.get("/js/jquery-1.2.5.js", fu.staticHandler("./client-side/js/jquery-1.2.5.js"));
   
   
