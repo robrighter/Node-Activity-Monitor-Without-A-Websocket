@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Simple Activity Monitor - Using Node.JS</title>
+<link rel="stylesheet" href="/css/site.css" type="text/css">
+<script src="http://www.google.com/jsapi"></script>
+<script>
+  // Load jQuery
+  google.load("jquery", "1.3.2");
+</script>
+<script src="/js/site.js"></script>
+<script>
+$(document).ready(function(){
+   getupdate(-1);
+});
+</script>                                                                                           
+</head>
+<body>
+  <div id="content">
+    <h1>Simple Activity Monitor</h1>
+    <h2><em>Using node.js</em></h2>
+    <div class="info" id="contentspace">
+       <table>
+	   <tr><td colspan="3">disk0</td><td colspan="3">cpu</td><td colspan="3">load average</td></tr>
+	   <tr><td>KB/t</td><td>tps</td><td>MB/s</td>   <td>us</td><td>sy</td><td>id</td>   <td>1m</td><td>5m</td><td>15m</td></tr>
+       <tr id="updatedcontent"></tr>
+       </table>
+    </div>
+  </div>
+</body>
+</html>
