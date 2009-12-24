@@ -1,43 +1,19 @@
-var fu = require("./fu");
+var fu = require("./lib/fu");
 var sys = require('sys');
-process.mixin(GLOBAL, require("./underscore"));
+process.mixin(GLOBAL, require("./lib/underscore"));
+var lpb = require("./lib/longpollingbuffer");
 
 HOST = null; // localhost
 PORT = 8000;
 
-//helper functions and classes
+//helper function
 String.prototype.trim = function() {
     return this.replace(/^\s+|\s+$/g,"");
 }
 
-
-function feeditem (offset,value) {
-    this.offset = offset;
-    this.value = value;
-}
-
-
-//the readbuffer provides a databuffer with a moving offset that can be used to allow AJAX long polling (instead of the websocket)
-function readBuffer (size) {
-    this.data = new Array();
-    this.size = size;
-    this.offset = 0;
-    this.push = function(value) {
-        this.data.unshift(new feeditem(this.offset++,value));
-        while(this.data.length > size){
-            this.data.pop([]);
-        }
-    }
-    this.since = function(timestamp) {
-        return _.select(this.data, function(item){ return item.offset>timestamp; });
-    }
-}
-
-
-
 // Now start the program
 fu.listen(PORT, HOST);
-var rb = new readBuffer(200);
+var rb = new lpb.LongPollingBuffer(200);
 var iostat = process.createChildProcess("iostat", ["-w 1"])
 
 
@@ -56,9 +32,12 @@ fu.get("/update", function (req, res) {
       if(!thesince){
           thesince = -1;
       }
-      var body = '['+_.map(rb.since(thesince),JSON.stringify).join(',\n')+']';
-      res.sendBody( body );
-      res.finish();
+      
+      rb.addListenerForUpdateSince(thesince, function(data){
+           var body = '['+_.map(data,JSON.stringify).join(',\n')+']';
+           res.sendBody( body );
+           res.finish();
+      });
 });
   
 // Static Files
