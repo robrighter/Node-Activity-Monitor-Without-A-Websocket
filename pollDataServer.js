@@ -2,6 +2,7 @@ var fu = require("./lib/fu");
 var sys = require('sys');
 process.mixin(GLOBAL, require("./lib/underscore"));
 var lpb = require("./lib/longpollingbuffer");
+var url = require("url");
 
 HOST = null; // localhost
 PORT = 8000;
@@ -28,11 +29,13 @@ iostat.addListener("output", function (data) {
 //Setup the updater page for long polling  
 fu.get("/update", function (req, res) {
       res.sendHeader(200,{"Content-Type": "text/html"});
-      var thesince = parseInt(req.uri.params.since);
-      if(!thesince){
+      var thesince;
+      if(url.parse(req.url,true).hasOwnProperty('query') && url.parse(req.url,true).query.hasOwnProperty('since')){
+          thesince = parseInt(url.parse(req.url,true)['query']['since']);
+      }
+      else {
           thesince = -1;
       }
-      
       rb.addListenerForUpdateSince(thesince, function(data){
            var body = '['+_.map(data,JSON.stringify).join(',\n')+']';
            res.sendBody( body );
